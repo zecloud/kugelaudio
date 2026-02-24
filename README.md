@@ -124,7 +124,7 @@ Get started with KugelAudio quickly using our documentation:
 |---|---|
 | 📥 [**Installation**](#installation) | Set up KugelAudio on your machine |
 | 🎯 [**Quick Start**](#quick-start) | Generate your first speech in minutes |
-| 🎭 [**Voice Cloning**](#voice-cloning) | Clone any voice with reference audio |
+
 | ☁️ [**Hosted API**](#hosted-api) | Use our cloud API for zero-setup inference |
 | 🔒 [**Watermarking**](#audio-watermarking) | Verify AI-generated audio |
 | 📦 [**Models**](#models) | Available model variants and benchmarks |
@@ -136,7 +136,7 @@ Get started with KugelAudio quickly using our documentation:
 - 🏆 **State-of-the-Art Performance**: Outperforms ElevenLabs and other leading TTS models in human evaluations
 - 🌍 **European Language Focus**: Trained specifically for 24 major European languages
 - **High-Quality TTS**: State-of-the-art speech synthesis using AR + Diffusion
-- **Voice Cloning**: Clone any voice with just a few seconds of reference audio
+
 - **Audio Watermarking**: All generated audio is watermarked using [Facebook's AudioSeal](https://huggingface.co/facebook/audioseal)
 - 🎭 **Emotional Range**: Supports various speaking styles including shouting, singing, and expressive speech
 - **Web Interface**: Easy-to-use Gradio UI for non-technical users
@@ -200,8 +200,7 @@ Then open http://127.0.0.1:7860 in your browser.
 # Generate speech from text
 uv run python start.py generate "Hello, this is KugelAudio!" -o hello.wav
 
-# With voice cloning
-uv run python start.py generate "Hello in your voice!" -r reference.wav -o cloned.wav
+
 
 # Using the default model for higher quality
 uv run python start.py generate "Premium quality speech" --model kugelaudio/kugelaudio-0-open -o premium.wav
@@ -240,23 +239,7 @@ with torch.no_grad():
 processor.save_audio(outputs.speech_outputs[0], "output.wav")
 ```
 
-### Voice Cloning
 
-```python
-# Process text with voice prompt for cloning
-inputs = processor(
-    text="Hello world!",
-    voice_prompt="reference_voice.wav",  # Path to reference audio
-    return_tensors="pt"
-)
-inputs = {k: v.to(device) if isinstance(v, torch.Tensor) else v for k, v in inputs.items()}
-
-# Generate with cloned voice (watermark is automatically applied)
-with torch.no_grad():
-    outputs = model.generate(**inputs, cfg_scale=3.0)
-
-processor.save_audio(outputs.speech_outputs[0], "cloned_output.wav")
-```
 
 ## Hosted API
 
