@@ -151,13 +151,7 @@ class KugelAudioModel(KugelAudioPreTrainedModel):
         algorithm_type = getattr(
             config.diffusion_head_config, "ddpm_algorithm_type", "sde-dpmsolver++"
         )
-        self.noise_scheduler = DPMSolverMultistepScheduler(
-            num_train_timesteps=config.diffusion_head_config.ddpm_num_steps,
-            beta_schedule=config.diffusion_head_config.ddpm_beta_schedule,
-            prediction_type=config.diffusion_head_config.prediction_type,
-            algorithm_type=algorithm_type,
-            solver_order=2,
-        )
+        self.noise_scheduler = None
 
     def get_input_embeddings(self):
         if hasattr(self.language_model, "embed_tokens"):
