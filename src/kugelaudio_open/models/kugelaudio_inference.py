@@ -92,7 +92,11 @@ class KugelAudioForConditionalGenerationInference(KugelAudioPreTrainedModel, Gen
     @property
     def noise_scheduler(self):
         return self.model.noise_scheduler
-
+        
+    @noise_scheduler.setter
+    def noise_scheduler(self, scheduler):
+        self.model.noise_scheduler = scheduler
+        
     @property
     def prediction_head(self):
         return self.model.prediction_head
