@@ -758,7 +758,8 @@ class TokenizerEncoder(nn.Module):
         )
         
         self.stages = nn.ModuleList()
-        dp_rates = torch.linspace(0, drop_path_rate, sum(self.depths)).tolist() 
+        n = sum(self.depths)
+        dp_rates = [drop_path_rate * i / max(n - 1, 1) for i in range(n)] 
         cur = 0
 
         for i in range(len(self.depths)):
@@ -895,7 +896,8 @@ class TokenizerDecoder(nn.Module):
         )
 
         self.stages = nn.ModuleList()
-        dp_rates = torch.linspace(0, drop_path_rate, sum(self.depths)).tolist()
+        n = sum(self.depths)
+        dp_rates = [drop_path_rate * i / max(n - 1, 1) for i in range(n)]
         cur = 0
         
         # Create stages in the same order as the original model
