@@ -125,41 +125,27 @@ class KugelAudioModel(KugelAudioPreTrainedModel):
     def __init__(self, config):
         super().__init__(config)
 
-        if hasattr(config, "torch_dtype") and config.torch_dtype is not None:
-            if isinstance(config.torch_dtype, str):
-                dtype = getattr(torch, config.torch_dtype)
-            else:
-                dtype = config.torch_dtype
-        else:
-            dtype = torch.float32
-
         # Initialize Qwen2 model for language modeling
         lm_config = config.decoder_config
         self.language_model = AutoModel.from_config(lm_config)
 
-        # Initialize speech components if needed
-        self.acoustic_tokenizer = AutoModel.from_config(
-            config.acoustic_tokenizer_config
-        ).to(dtype)
-        self.semantic_tokenizer = AutoModel.from_config(
-            config.semantic_tokenizer_config
-        ).to(dtype)
+        # Initialize speech components
+        self.acoustic_tokenizer = AutoModel.from_config(config.acoustic_tokenizer_config)
+        self.semantic_tokenizer = AutoModel.from_config(config.semantic_tokenizer_config)
 
         self.acoustic_connector = SpeechConnector(
             config.acoustic_vae_dim, lm_config.hidden_size
-        ).to(dtype)
+        )
         self.semantic_connector = SpeechConnector(
             config.semantic_vae_dim, lm_config.hidden_size
-        ).to(dtype)
+        )
 
         # Register scaling factors as buffers - use 1D tensors for FSDP compatibility
         self.register_buffer("speech_scaling_factor", torch.tensor(float("nan")))
         self.register_buffer("speech_bias_factor", torch.tensor(float("nan")))
 
         # Initialize prediction head for speech generation
-        self.prediction_head = AutoModel.from_config(config.diffusion_head_config).to(
-            dtype
-        )
+        self.prediction_head = AutoModel.from_config(config.diffusion_head_config)
 
         # Initialize noise scheduler with SDE-DPM-Solver++ for better quality
         algorithm_type = getattr(
